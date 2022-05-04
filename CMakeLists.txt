@@ -14,10 +14,10 @@ set(CMAKE_PROJECT_VERSION_PATCH 1)
 #' src/[^\n ]*\.h'
 # Define a variable containing a list of source files for the project
 set(SRC_FILES
-        src/psl.cpp)
+        src/psl.cpp src/image.cpp)
 
 # Define the build target for the library
-#add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+#add_library(${PROJECT_NAME} ${SRC_FILES})
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 #Library options
@@ -30,3 +30,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 
 #target is used to only effect this library.
 target_include_directories(${PROJECT_NAME} PRIVATE include/psl)
+target_include_directories(${PROJECT_NAME} PRIVATE internal_include)
