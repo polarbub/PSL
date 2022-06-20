@@ -7,7 +7,10 @@ namespace psl::image {
         uchar r;
         uchar g;
         uchar b;
+
+        bool operator!=(const Color& c);
+
+        bool operator==(const Color& c);
     };
 #define Pixel Color
-    
 }

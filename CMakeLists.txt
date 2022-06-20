@@ -18,9 +18,8 @@ set(SRC_FILES
 
 # Define the build target for the library
 #add_library(${PROJECT_NAME} ${SRC_FILES})
+#ADD: Make libraries staticly linked
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
-
-#Library options
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION 1)
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER include/psl/psl.h)
