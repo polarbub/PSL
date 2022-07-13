@@ -14,7 +14,7 @@ set(CMAKE_PROJECT_VERSION_PATCH 1)
 #' src/[^\n ]*\.h'
 # Define a variable containing a list of source files for the project
 set(SRC_FILES
-        src/psl.cpp src/image.cpp)
+        src/psl.cpp src/image.cpp src/threadDispatcher.cpp)
 
 # Define the build target for the library
 #add_library(${PROJECT_NAME} ${SRC_FILES})
