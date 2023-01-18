@@ -3,7 +3,6 @@
 
 #include <mutex>
 #include "functional"
-#include "iostream"
 #include "signal.h"
 
 template<typename T>
@@ -23,7 +22,9 @@ bool psl::thread::ThreadSafeQueue<T>::isEmpty() {
     return q.empty();
 }
 
-psl::thread::PrioritizedThreadPool::PrioritizedThreadPool(uint threads) {
+void psl::thread::PrioritizedThreadPool::internalConstructor(uint threads) {
+    threadCount = threads;
+
     signal(10, PrioritizedThreadPool::highPriorityJobRunner);
 
     if(this->pools == nullptr) {
@@ -33,17 +34,34 @@ psl::thread::PrioritizedThreadPool::PrioritizedThreadPool(uint threads) {
     lowPrioirtyQueue = new ThreadSafeQueue<std::function<void()>>;
     highPrioirtyQueue = new ThreadSafeQueue<std::function<void()>>;
 
-    threadsInHighPriority = new bool[threads];
+    threadsInHighPriority = new bool[threadCount];
 
-    threadArray = new std::thread*[threads];
+    threadArray = new std::thread*[threadCount];
     int i;
-    for(i = 0; i++ < threads;) {
-        std::cout << "made thread" << std::endl;
+    for(i = 0; i++ < threadCount;) {
         threadArray[i] = new std::thread(&PrioritizedThreadPool::threadHoldingFunction, this, i);
+
+        threadsInHighPriority[i] = false;
     }
 
     pools->push_back(this);
 }
+
+psl::thread::PrioritizedThreadPool::PrioritizedThreadPool(uint threads) {
+    internalConstructor(threads);
+}
+
+psl::thread::PrioritizedThreadPool::PrioritizedThreadPool() {
+    uint threads = std::thread::hardware_concurrency();
+    if(threads == 0) {
+        threads = 1;
+    } else {
+        threads--;
+    }
+    internalConstructor(threads);
+}
+
+
 
 psl::thread::PrioritizedThreadPool::~PrioritizedThreadPool() {
     pools->erase(pools->begin() + poolsID);
@@ -78,12 +96,10 @@ void psl::thread::PrioritizedThreadPool::threadHoldingFunction(int i) {
 
 void psl::thread::PrioritizedThreadPool::highPriorityJobRunner(int i) {
     PrioritizedThreadPool *This;
-    uint id = 0;
 
     for(PrioritizedThreadPool* pool : *pools) {
         for(i = 0; i++ < pool->threadCount;) {
             if(pool->threadArray[i]->get_id() == std::this_thread::get_id()) {
-                id = i;
                 This = pool;
             }
         }

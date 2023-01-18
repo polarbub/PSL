@@ -9,9 +9,9 @@
 #include "functional"
 
 namespace psl::thread {
-    class threadSafePrint {
+    class ThreadSafePrint {
     public:
-        explicit threadSafePrint() {};
+        explicit ThreadSafePrint() {};
 
         template <typename... T>
         void print(const T&... items) {
@@ -66,9 +66,13 @@ namespace psl::thread {
 
     class PrioritizedThreadPool {
     public:
+        //Use the specified mount of threads.
         PrioritizedThreadPool(uint threads);
+        //Use the maximum available amount of threads.
+        PrioritizedThreadPool();
         ~PrioritizedThreadPool();
 
+        //This takes a function with its arguments and returns a std::future of whatever type that the function returns. For a member function put this as the first argument.
         template <typename FunctionType, typename... ArgTypes, typename ReturnType = std::invoke_result_t<std::decay_t<FunctionType>, std::decay_t<ArgTypes>...>>
         std::future<ReturnType> submit(const FunctionType& function, const ArgTypes &... args) {
             std::future<ReturnType> returnHandle;
@@ -76,6 +80,7 @@ namespace psl::thread {
             return returnHandle;
         };
 
+        //This takes a function with its arguments and returns a std::future of whatever type that the function returns. This function does the job before any of the normal submit jobs. For a member function put this as the first argument.
         template <typename FunctionType, typename... ArgTypes, typename ReturnType = std::invoke_result_t<std::decay_t<FunctionType>, std::decay_t<ArgTypes>...>>
         std::future<ReturnType> submitHighPriority(const FunctionType& function, const ArgTypes &... args) {
             std::future<ReturnType> returnHandle;
@@ -94,6 +99,8 @@ namespace psl::thread {
         };
 
     private:
+        void internalConstructor(uint threads);
+
         template <typename FunctionType, typename... ArgTypes, typename ReturnType = std::invoke_result_t<std::decay_t<FunctionType>, std::decay_t<ArgTypes>...>>
         std::function<void()> createJob(const FunctionType& function, const ArgTypes &... args,  std::future<ReturnType>& returnHandle) {
             std::function<ReturnType(ArgTypes...)> realFunction(function);
