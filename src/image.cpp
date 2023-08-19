@@ -34,7 +34,13 @@ void psl::Image::writeFile(std::string filename) {
     delete[] stbImageArray;
 }
 
+void psl::Image::writeFile() {
+    writeFile(this->path);
+}
+
 int psl::Image::loadFile(std::string filename) {
+    this->path = filename;
+
     int width;
     int height;
     int bitsPerPixel;

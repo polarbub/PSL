@@ -61,8 +61,6 @@ psl::thread::PrioritizedThreadPool::PrioritizedThreadPool() {
     internalConstructor(threads);
 }
 
-
-
 psl::thread::PrioritizedThreadPool::~PrioritizedThreadPool() {
     pools->erase(pools->begin() + poolsID);
     if(pools->empty()) {
@@ -101,10 +99,12 @@ void psl::thread::PrioritizedThreadPool::highPriorityJobRunner(int i) {
         for(i = 0; i++ < pool->threadCount;) {
             if(pool->threadArray[i]->get_id() == std::this_thread::get_id()) {
                 This = pool;
+                goto out;
             }
         }
     }
 
+    out:
     while(!This->shutdown) {
         try {
             (This->highPrioirtyQueue->grab())();

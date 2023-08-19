@@ -1,4 +1,6 @@
 #pragma once
+#ifndef psl_h
+#define psl_h
 
 #include <chrono>
 #include <thread>
@@ -8,7 +10,7 @@
 //Sleep for ms
 #define psl_sleep(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms))
 //Get the length of a normal array
-#define pls_getArrayLength(array) sizeof(array)/sizeof(array[0])
+#define psl_getArrayLength(array) sizeof(array)/sizeof(array[0])
 //Print the name and contents of a variable, very useful for debugging
 #define psl_printVarContentsName(command) std::cout << #command << ": " << command << std::endl;
 
@@ -39,27 +41,9 @@ typedef unsigned char uchar;
 #define WIN32
 #endif
 
-#include "image.h"
-
 namespace psl {
     //Convert an argc and argv to a vector of strings.
     std::vector<std::string> argcvToStringVector(int &argc, char** argv);
-
-    //My image system
-    //FIX: Make this use an array not a vector by overriding the [] operator
-    class Image : public std::vector<std::vector<psl::image::Color>> {
-    public:
-        //This can be really slow, just wait.
-        void writeFile(std::string filename);
-        int loadFile(std::string filename);
-
-        Image(std::string fileName);
-        Image();
-
-        int getHeight();
-        int getWidth();
-    };
-
-    //Multithreading Dispatcher
-    class ThreadDispatcher;
 }
+
+#endif
